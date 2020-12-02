@@ -85,6 +85,10 @@ class Tour:             #create a Tour data type
                 self.tail = newNode                         #将输入node放置于tail node之后
                 self.distance += t.distanceTo(newNode)      #更新distance总里程 等于 输入node到tail node的距离 加 原始里程
 
+    def loop(self):
+        if self.head.next is not None:
+            self.distance += self.head.next.distanceTo(self.tail)
+
     def draw(self, l, r):  #画图function
         xdata,ydata = [],[]
         n = self.head.next
@@ -92,6 +96,8 @@ class Tour:             #create a Tour data type
             xdata.append(n.p.x)
             ydata.append(n.p.y)
             n = n.next
+        xdata.append(xdata[0])
+        ydata.append(ydata[0])
         l.set_xdata(xdata)
         l.set_ydata(ydata)
         r.set_xdata(xdata)
@@ -125,6 +131,7 @@ while line:
     t.draw(l,r)
     line = f.readline()
     time.sleep(0.1)
+t.loop()
 
 plt.show()
 print(t.distance) 
