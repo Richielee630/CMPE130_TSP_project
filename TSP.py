@@ -1,5 +1,5 @@
-#使用贪婪算法以及其启发式来解决商旅问题Traveling Salesman Problem (TSP)
-#李兆钦
+#Useing Greedy Algorithm Heuristic to solve Traveling Salesman Problem (TSP)
+#Zhaoqin Li, Chenghan Bian, Zuofan Zhang
 import math
 import sys
 import matplotlib.pyplot as plt
@@ -38,58 +38,64 @@ class Tour:             #create a Tour data type
         # help function to insert Node next after parent
         next.next = parent.next
         parent.next = next
- 
-    def insertSmallest(self, p):        ###Smallest increase heuristic
-        newNode = Node(p)               #输入node
+
+    def insertSmallest(self, p):  ###Smallest increase heuristic
+        newNode = Node(p)  # create newNode
         if self.head.next == None:
-            self.head.next = newNode    #在链表中没有node时，直接放入第一个输入node
+            self.head.next = newNode  # Insert the first node if there's no node in linked list
             self.tail = newNode
-            self.distance = 0.0         #distance总里程
+            self.distance = 0.0  # total distance
         else:
-            next = self.head.next       #测试node1 = self.head; 测试node2 = self.head.next
-            record = self.head      #记录要测试的两个node中的前一个
-            dis = M**2+N**2         #给dis距离变量 设定理论最大距离
-            dis_head = next.distanceTo(newNode)     #新输入node到head的距离
-            dis_tail = self.tail.distanceTo(newNode)       #新输入node到tail的距离
+            next = self.head.next  # test node1 = self.head; test node2 = self.head.next
+            record = self.head  # recode first node
+            dis = M ** 2 + N ** 2  # set max dis value
+            dis_head = next.distanceTo(newNode)  # distance from newNode to head
+            dis_tail = self.tail.distanceTo(newNode)  # distance from newNode to tail
 
-            while next.next is not None:            #当链表下一位存在时，继续
-               cal = next.distanceTo(newNode)+next.next.distanceTo(newNode)-next.distanceTo(next.next)      #定义 cal 为包含新输入node D 之后的距离变量 = Dis(测试node1 到 F)+Dis(F 到 测试node2)-Dis(两个测试node之间)
-               if cal <= dis:
-                   dis = cal        #如果新输入node加入到两个测试node之间之后的距离 小于 上一个测试的两个测试node之间的距离， 更新dis
-                   record = next    #更新record所记录的测试node
-               next = next.next     #测试下一对测试node
+            while next.next is not None:  # continue when next node exists
+                cal = next.distanceTo(newNode) + next.next.distanceTo(newNode) - next.distanceTo(
+                    next.next)  # define cal as distance after include newNode D = Dis(test node1 to F)+Dis(F to test node2)-Dis(between two test nodes)
+                if cal <= dis:
+                    dis = cal  # update dis if distance from newNode to test node is smaller than last test
+                    record = next  # update recode next ndoe
+                next = next.next  # test next node
 
-            mindis = min(dis,min(dis_head,dis_tail))        #当测试node之前或之后为空白时， 比较输入node到已知最短相对距离的一对测试node的距离 dis，然后再与dis_head 和 dis_tail分别对比，找出其中最小的值，存入变量mindis
+            mindis = min(dis, min(dis_head,
+                                  dis_tail))  # When the test node is empty before or after, compare dis with the smallest value between dis_head and dis_tail to find the smallest value and store it in mindis
             if mindis == dis_head:
-                self.insert(self.head,newNode)          #当dis_head为最小时，将输入node放置于总链表head之前
+                self.insert(self.head, newNode)  # put newNode after head node if dis_head is the smallest
             elif mindis == dis_tail:
-                self.insert(self.tail,newNode)          #当dis_tail为最小时，将输入node放置于总链表tail之后
-                self.tail = newNode                     #并且将链表tail指向新输入node
+                self.insert(self.tail, newNode)  # put newNode after tail node if dis_tail is the smallest
+                self.tail = newNode  # newNode = tail
             else:
-                self.insert(record,newNode)             #当dis最小时, 将输入node放置于record node之后
-            self.distance += mindis                     #更新distance总里程 等于 mindis加 原始里程
-     
-    def insertNearest(self, p):             ###Nearest neighbor heuristic
-        newNode = Node(p)                   #输入node
+                self.insert(record, newNode)  # put newNode after record node if dis is the smallest
+            self.distance += mindis  # update total distance = mindis + original distance
+
+    def insertNearest(self, p):  ###Nearest neighbor heuristic
+        newNode = Node(p)  # create newNode
         if self.head.next == None:
-            self.head.next = newNode        #在链表中没有node时，直接放入第一个输入node
+            self.head.next = newNode  # Insert the first node if there's no node in linked list
             self.tail = newNode
-            self.distance = 0.0             #distance总里程
+            self.distance = 0.0  # total distance
         else:
-            h,t = self.head.next,self.tail
-            if h.distanceTo(newNode) <= t.distanceTo(newNode):      #如果输入node到head node的距离 <= 输入node到tail node的距离
-                self.insert(self.head,newNode)              #将输入node放置于head node之后
-                self.distance += h.distanceTo(newNode)      #更新distance总里程 等于 输入node到head node的距离 加 原始里程
+            h, t = self.head.next, self.tail
+            if h.distanceTo(newNode) <= t.distanceTo(
+                    newNode):  # if distance between newNode and head <= distance between newNode and tail
+                self.insert(self.head, newNode)  # put newNode after head node
+                self.distance += h.distanceTo(
+                    newNode)  # update total distance = distance from newNode to tail + original distance
             else:
-                self.insert(self.tail,newNode)              #如果输入node到head node的距离 > 输入node到tail node的距离
-                self.tail = newNode                         #将输入node放置于tail node之后
-                self.distance += t.distanceTo(newNode)      #更新distance总里程 等于 输入node到tail node的距离 加 原始里程
+                self.insert(self.tail,
+                            newNode)  # if distance between newNode and head > distance between newNode and tail
+                self.tail = newNode  # put newNode after tail node
+                self.distance += t.distanceTo(
+                    newNode)  # update total distance = distance from newNode to tail + original distance
 
     def loop(self):
         if self.head.next is not None:
             self.distance += self.head.next.distanceTo(self.tail)
 
-    def draw(self, l, r):  #画图function
+    def draw(self, l, r):  #draw function
         xdata,ydata = [],[]
         n = self.head.next
         while n is not None:
@@ -100,13 +106,13 @@ class Tour:             #create a Tour data type
         ydata.append(ydata[0])
         l.set_xdata(xdata)
         l.set_ydata(ydata)
-        r.set_xdata(xdata)
-        r.set_ydata(ydata)
+        #r.set_xdata(xdata)
+        #r.set_ydata(ydata)
 
         plt.draw()
         plt.pause(0.2)
 
-def read_coordinates(line):     #数据读取function
+def read_coordinates(line):     #coordinates reading function
     line = [float(c) for c in line.split(' ')]
     p = Point(line[0],line[1])
     return  p
