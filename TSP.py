@@ -1,5 +1,5 @@
-#Useing Greedy Algorithm Heuristic to solve Traveling Salesman Problem (TSP)
-#Zhaoqin Li, Chenghan Bian, Zuofan Zhang
+# Useing Greedy Algorithm Heuristic to solve Traveling Salesman Problem (TSP)
+# Zhaoqin Li, Chenghan Bian, Zuofan Zhang
 import math
 import sys
 import matplotlib.pyplot as plt
@@ -9,32 +9,33 @@ import time
 
 class Point:
     # data structure for each point
-    def __init__(self,x,y):
-        self.x,self.y = x,y
+    def __init__(self, x, y):
+        self.x, self.y = x, y
 
-    def distanceTo(self,p):
+    def distanceTo(self, p):
         # Point member function to calculate the Euclidean distance between points
-        return math.sqrt((self.x-p.x)**2+(self.y-p.y)**2)
+        return math.sqrt((self.x - p.x) ** 2 + (self.y - p.y) ** 2)
 
 
 class Node:
     # Linked List Node wraps point
-    def __init__(self,p):
-        self.p = p 
+    def __init__(self, p):
+        self.p = p
         self.next = None
 
-    def distanceTo(self,n):
+    def distanceTo(self, n):
         # Node member function to calculate the Euclidean distance between Nodes
         return self.p.distanceTo(n.p)
 
-class Tour:             #create a Tour data type
+
+class Tour:  # create a Tour data type
     def __init__(self):
         # Nodes are sequentially linked by a linked list, head and tail are the head and tail of the linked list
         self.head = Node(None)
         self.tail = self.head
         self.distance = 0.0
-   
-    def insert(self,parent,next):
+
+    def insert(self, parent, next):
         # help function to insert Node next after parent
         next.next = parent.next
         parent.next = next
@@ -95,8 +96,8 @@ class Tour:             #create a Tour data type
         if self.head.next is not None:
             self.distance += self.head.next.distanceTo(self.tail)
 
-    def draw(self, l, r):  #draw function
-        xdata,ydata = [],[]
+    def draw(self, l, r):  # draw function
+        xdata, ydata = [], []
         n = self.head.next
         while n is not None:
             xdata.append(n.p.x)
@@ -106,40 +107,43 @@ class Tour:             #create a Tour data type
         ydata.append(ydata[0])
         l.set_xdata(xdata)
         l.set_ydata(ydata)
-        #r.set_xdata(xdata)
-        #r.set_ydata(ydata)
+        # r.set_xdata(xdata)
+        # r.set_ydata(ydata)
 
+        plt.setp(l, linewidth=0.7)
+        plt.setp(l, color='black')
         plt.draw()
         plt.pause(0.2)
 
-def read_coordinates(line):     #coordinates reading function
+
+def read_coordinates(line):  # coordinates reading function
     line = [float(c) for c in line.split(' ')]
-    p = Point(line[0],line[1])
-    return  p
+    p = Point(line[1], line[2])
+    return p
+
 
 t = Tour()
-f = open(sys.argv[1],"r")
+f = open(sys.argv[1], "r")
 first = f.readline().split(' ')
-M,N = int(first[0]),int(first[1])
+M, N = int(first[1]), int(first[2])
 line = f.readline()
 
-
 axes = plt.gca()
-axes.set_xlim(0,M)
-axes.set_ylim(0,N)
-l, = axes.plot([],[],'r-')
-r, = axes.plot([],[],'bo')
+axes.set_xlim(0, M)
+axes.set_ylim(0, N)
+l, = axes.plot([], [], 'r-')
+r, = axes.plot([], [], 'bo')
 
 while line:
     p = read_coordinates(line)
-    #t.insertNearest(p)
-    t.insertSmallest(p)
-    t.draw(l,r)
+    t.insertNearest(p)
+    # t.insertSmallest(p)
+    t.draw(l, r)
     line = f.readline()
     time.sleep(0.1)
 t.loop()
 
 plt.show()
-print(t.distance) 
+print(t.distance)
 
-         
+
