@@ -118,14 +118,14 @@ class Tour:  # create a Tour data type
 
 def read_coordinates(line):  # coordinates reading function
     line = [float(c) for c in line.split(' ')]
-    p = Point(line[1], line[2])
+    p = Point(line[0], line[1])
     return p
 
 
 t = Tour()
 f = open(sys.argv[1], "r")
 first = f.readline().split(' ')
-M, N = int(first[1]), int(first[2])
+M, N = int(first[0]), int(first[1])
 line = f.readline()
 
 axes = plt.gca()
@@ -136,8 +136,8 @@ r, = axes.plot([], [], 'bo')
 
 while line:
     p = read_coordinates(line)
-    t.insertNearest(p)
-    # t.insertSmallest(p)
+    #t.insertNearest(p)
+    t.insertSmallest(p)
     t.draw(l, r)
     line = f.readline()
     time.sleep(0.1)
